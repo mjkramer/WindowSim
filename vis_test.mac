@@ -1,0 +1,44 @@
+#/run/verbose 1
+#/event/verbose 1
+#/tracking/verbose 1
+
+/sim/seedWithTime
+/sim/setFileName out.root
+/sim/setKB 0.125 # mm/MeV
+
+/physics_engine/tailor/MuonNuclear on
+
+/run/initialize
+
+/gps/particle neutron
+/gps/energy 5 MeV
+/gps/direction 0 0 1
+/gps/position 0 0 -5 m
+
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/lightsVector -1 -1 -1
+#/vis/viewer/set/style wireframe
+#/vis/viewer/set/auxiliaryEdge true
+/vis/viewer/set/lineSegmentsPerCircle 100
+
+#/vis/scene/add/axes 0 0 0 6 cm
+/vis/scene/add/trajectories smooth
+
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByParticleID-0/default/setStepPtsSize 2
+
+/vis/scene/endOfEventAction accumulate
+
+/vis/geometry/set/visibility World 0 false
+
+#/vis/viewer/set/style surface
+#/vis/viewer/set/hiddenMarker true
+#/vis/viewer/set/viewpointThetaPhi 120 150
+/vis/viewer/set/autoRefresh true
+
+/run/beamOn 10

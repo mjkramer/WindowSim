@@ -1,0 +1,18 @@
+#/run/verbose 1
+#/event/verbose 1
+#/tracking/verbose 1
+
+/sim/seedWithTime
+/sim/setFileName out.root
+/sim/setKB 0.125 # mm/MeV
+
+/physics_engine/tailor/MuonNuclear on
+
+/run/initialize
+
+/gps/particle neutron
+/gps/energy 5 MeV
+/gps/direction 0 0 1
+/gps/position 0 0 -5 m
+
+/run/beamOn 10
