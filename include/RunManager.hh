@@ -7,6 +7,8 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh" // XXX
+#include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
 
@@ -22,6 +24,7 @@ private:
   void InitActions();
 
   G4UIdirectory* fDirectory;
+  G4UIcmdWithADouble* fThicknessCmd;
   G4UIcmdWithAString* fPhysListCmd;
   G4UIcmdWithoutParameter* fSeedWithTimeCmd;
   G4UIcmdWithAnInteger* fSeedCmd;

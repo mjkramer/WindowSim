@@ -11,6 +11,9 @@
 
 using namespace CLHEP;
 
+DetectorConstruction::DetectorConstruction(G4double thickness)
+  : fThickness(thickness) {}
+
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   G4NistManager* man = G4NistManager::Instance();
@@ -28,7 +31,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 //  G4double inch = 2.54*cm;
 
-  G4Box* windowBox = new G4Box("windowBox", 0.5*m, 0.5*m, 0.1*m);
+  G4Box* windowBox = new G4Box("windowBox", 0.5*m, 0.5*m, fThickness*mm);
   G4LogicalVolume* windowL = new G4LogicalVolume(windowBox, aluminum, "windowL");
   windowL->SetVisAttributes(glassVisAtt);
   G4VPhysicalVolume* windowP =

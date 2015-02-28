@@ -8,7 +8,11 @@ class G4PhysicalVolume;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
+  DetectorConstruction(G4double thickness);
   virtual G4VPhysicalVolume* Construct();
+
+private:
+  G4double fThickness;
 };
 
 #endif
