@@ -6,13 +6,12 @@
 /sim/setThicknessMM 10
 /sim/seedWithTime
 /sim/setFileName out.root
-/sim/setKB 0.125 # mm/MeV
 
 /physics_engine/tailor/MuonNuclear on
 
 /run/initialize
 
-/gps/particle neutron
+/gps/particle electron
 /gps/energy 5 MeV
 /gps/direction 0 0 1
 /gps/position 0 0 -5 m

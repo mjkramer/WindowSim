@@ -21,28 +21,19 @@ using namespace CLHEP;
 
 void SteppingAction::UserSteppingAction(const G4Step *step)
 {
-  G4StepPoint* preStepPt = step->GetPreStepPoint();
-  G4StepPoint* postStepPt = step->GetPostStepPoint();
+  G4VPhysicalVolume* preVol = step->GetPreStepPoint()->GetPhysicalVolume();
+  G4VPhysicalVolume* postVol = step->GetPostStepPoint()->GetPhysicalVolume();
 
-  double e1 = preStepPt->GetKineticEnergy()/MeV;
-  double e2 = postStepPt->GetKineticEnergy()/MeV;
-  double dx = (preStepPt->GetPosition() - postStepPt->GetPosition()).mag()/mm;
+  G4String preName = preVol ? preVol->GetName() : G4String("NULL");
+  G4String postName = postVol ? postVol->GetName() : G4String("NULL");
 
-  G4VPhysicalVolume *preStepVol = preStepPt->GetPhysicalVolume();
-  G4VPhysicalVolume *postStepVol = postStepPt->GetPhysicalVolume();
+  if (preName == "window" && postName == "world") {
+    G4int id = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
-  G4String preName = preStepVol ? preStepVol->GetName() : G4String("NULL");
-  G4String postName = postStepVol ? postStepVol->GetName() : G4String("NULL");
+    G4ThreeVector p = step->GetPostStepPoint()->GetMomentum();
+    G4double e_mev = step->GetPostStepPoint()->GetKineticEnergy()/MeV;
 
-  G4String partName = step->GetTrack()->GetParticleDefinition()->GetParticleName();
-  G4int partId = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
-
-  // printf("Step (%s:0x%llx): %s (%f MeV) -> %s (%f MeV), dx = %f mm\n",
-  // 	 partName.data(), (long long)step->GetTrack(),
-  // 	 preName.data(), e1, postName.data(), e2, dx);
-
-  if (partId == ID_PROTON && preStepVol->GetName() == "detector"
-      && postStepVol->GetName() == "detector") {
-    fEventAction->Register(step->GetTrack(), e1, e2, dx);
+//    fEventAction->Register(id, p.cosTheta(), p.mag());
+    fEventAction->Register(id, p.cosTheta(), e_mev, p.mag()/MeV);
   }
 }

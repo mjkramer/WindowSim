@@ -21,7 +21,6 @@
 
 class G4Track;
 
-
 class EventAction : public G4UserEventAction, public G4UImessenger
 {
 public:
@@ -32,29 +31,17 @@ public:
   void EndOfEventAction(const G4Event *event);
   void SetNewValue(G4UIcommand *cmd, G4String args);
 
-  void Register(G4Track* track, double e1, double e2, double dx);
+  void Register(G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV);
 
 private:
-  struct Proton {
-    float Etrue, Edep;
-    Proton() : Etrue(0), Edep(0) {}
-  };
+  G4UIcmdWithAString* fFileNameCmd;
+  TFile* fFile;
+  TTree* fTree;
 
-  std::map<G4Track*, Proton> fProtons;
-
-  G4double fKB;
-
-  G4UIcmdWithAString *fFileNameCmd;
-  G4UIcmdWithADouble *fKBCmd;
-  TFile *fFile;
-
-  TTree *fProTree;
-  G4int fNprotons;
-  G4float fProtonEdep[128], fProtonEtrue[128];
-
-  TTree *fStepTree;
-  G4int fEventId;
-  G4float fEi, fEf, fdx;
+  // branches
+  int fCount;
+  int fPartId[128];
+  float fCosTheta[128], fEnergyMeV[128], fMomMeV[128];
 };
 
 #endif

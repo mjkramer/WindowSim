@@ -6,7 +6,6 @@
 /sim/setThicknessMM 10
 /sim/seedWithTime
 /sim/setFileName out.root
-/sim/setKB 0.125 # mm/MeV
 
 /physics_engine/tailor/MuonNuclear on
 

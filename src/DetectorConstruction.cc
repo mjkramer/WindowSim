@@ -31,7 +31,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 //  G4double inch = 2.54*cm;
 
-  G4Box* windowBox = new G4Box("windowBox", 0.5*m, 0.5*m, fThickness*mm);
+  G4Box* windowBox = new G4Box("windowBox", 5*cm, 5*cm, fThickness*mm);
   G4LogicalVolume* windowL = new G4LogicalVolume(windowBox, aluminum, "windowL");
   windowL->SetVisAttributes(glassVisAtt);
   G4VPhysicalVolume* windowP =
