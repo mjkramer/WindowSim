@@ -21,7 +21,7 @@ using namespace CLHEP;
 
 
 EventAction::EventAction() :
-  fFile(NULL), fTree(NULL)
+  fFile(NULL), fTree(NULL), fpPartName(&fPartName)
 {
   fFileNameCmd = new G4UIcmdWithAString("/sim/setFileName", this);
   fFileNameCmd->SetGuidance("Set file name");
@@ -42,6 +42,7 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 
     fTree = new TTree("particles", "Secondary particles");
     fTree->Branch("count", &fCount, "count/I");
+    fTree->Branch("partName", "std::vector<std::string>", &fpPartName);
     fTree->Branch("partId", fPartId, "partId[count]/I");
     fTree->Branch("cosTheta", fCosTheta, "cosTheta[count]/F");
     fTree->Branch("energyMeV", fEnergyMeV, "energyMeV[count]/F");
@@ -52,6 +53,7 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   fCount = 0;
+  fPartName.clear();
 }
     
 void EventAction::EndOfEventAction(const G4Event*)
@@ -69,6 +71,7 @@ void EventAction::Register(G4int partId, G4double cosTheta, G4double energyMeV, 
   ++fCount;
 
   G4ParticleDefinition* pdef = G4ParticleTable::GetParticleTable()->FindParticle(partId);
+  fPartName.push_back(pdef->GetParticleName());
 
   printf("pID = %s\t\tcos = %f\t\te = %f\t\tp = %f\n",
          pdef->GetParticleName().c_str(), cosTheta, energyMeV, momMeV);

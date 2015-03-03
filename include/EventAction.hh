@@ -1,23 +1,16 @@
 #ifndef EventAction_h
 #define EventAction_h 1
 
-#include <map>
+#include <vector>
+#include <string>
 
 #include <TFile.h>
 #include <TTree.h>
 
 #include "globals.hh"
 #include "G4UserEventAction.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4UIterminal.hh"
-#include "G4UItcsh.hh"
-#include "G4UImanager.hh"
-#include "G4RunManager.hh"
-#include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithADouble.hh"
 #include "G4UImessenger.hh"
-#include "G4Run.hh"
 
 class G4Track;
 
@@ -42,6 +35,7 @@ private:
   int fCount;
   int fPartId[128];
   float fCosTheta[128], fEnergyMeV[128], fMomMeV[128];
+  std::vector<std::string> fPartName, *fpPartName;
 };
 
 #endif

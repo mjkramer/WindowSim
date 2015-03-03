@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "G4PhysListFactory.hh"
 
 #include "RunManager.hh"
@@ -13,7 +11,7 @@ RunManager::RunManager()
   fDirectory = new G4UIdirectory("/sim/");
   fDirectory->SetGuidance("Parameters for the simulation");
 
-  fThicknessCmd = new G4UIcmdWithADouble("/sim/setThicknessMM", this);
+  fThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sim/setThickness", this);
   fThicknessCmd->SetGuidance("Set thickness of window");
 
   fPhysListCmd = new G4UIcmdWithAString("/sim/setReferencePhysList", this);

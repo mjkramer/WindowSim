@@ -3,7 +3,7 @@
 #/tracking/verbose 1
 
 /sim/setReferencePhysList QGSP_BERT_HP # QGSC?
-/sim/setThicknessMM 10
+/sim/setThickness 10 mm
 /sim/seedWithTime
 /sim/setFileName out.root
 

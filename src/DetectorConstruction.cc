@@ -17,7 +17,7 @@ DetectorConstruction::DetectorConstruction(G4double thickness)
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   G4NistManager* man = G4NistManager::Instance();
-  G4Material* vacuum = man->FindOrBuildMaterial("G4_Galactic", false);
+  G4Material* vacuum = man->FindOrBuildMaterial("G4_Galactic");
   G4Material* aluminum = man->FindOrBuildMaterial("G4_Al");
 
   G4VisAttributes* glassVisAtt 
@@ -28,8 +28,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   worldL->SetVisAttributes(G4VisAttributes::Invisible);
   G4VPhysicalVolume* worldP =
     new G4PVPlacement(0, G4ThreeVector(), worldL, "world", 0, false, 0, true);                 
-
-//  G4double inch = 2.54*cm;
 
   G4Box* windowBox = new G4Box("windowBox", 5*cm, 5*cm, fThickness*mm);
   G4LogicalVolume* windowL = new G4LogicalVolume(windowBox, aluminum, "windowL");
