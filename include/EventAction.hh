@@ -7,7 +7,6 @@
 #include <TFile.h>
 #include <TTree.h>
 
-#include "globals.hh"
 #include "G4UserEventAction.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UImessenger.hh"

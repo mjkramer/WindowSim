@@ -1,17 +1,8 @@
 #include <cstdio>
 
 #include "G4VPhysicalVolume.hh"
-#include "G4UIterminal.hh"
-#include "G4UItcsh.hh"
-#include "G4UImanager.hh"
-#include "G4RunManager.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithoutParameter.hh"
 #include "G4UserSteppingAction.hh"
-#include "G4UImessenger.hh"
-#include "G4Run.hh"
+#include "G4Step.hh"
 
 #include "SteppingAction.hh"
 

@@ -2,19 +2,18 @@
 #/event/verbose 1
 #/tracking/verbose 1
 
-/sim/setReferencePhysList QGSP_BERT_HP # QGSC?
-/sim/setThickness 10 mm
+/sim/setReferencePhysList QGSP_BERT_HP
+/sim/setThickness 1 mm
 /sim/seedWithTime
+#/sim/seed 12345
 /sim/setFileName out.root
-
-/physics_engine/tailor/MuonNuclear on
 
 /run/initialize
 
 /gps/particle e-
 /gps/energy 5 MeV
 /gps/direction 0 0 1
-/gps/position 0 0 -5 m
+/gps/position 0 0 -1 m
 
 /vis/open OGL 600x600-0+0
 /vis/viewer/set/autoRefresh false
@@ -42,4 +41,4 @@
 #/vis/viewer/set/viewpointThetaPhi 120 150
 /vis/viewer/set/autoRefresh true
 
-/run/beamOn 10
+/run/beamOn 1

@@ -3,10 +3,7 @@
 
 #include <TROOT.h>
 #include "G4UIExecutive.hh"
-#include "G4UIterminal.hh"
-#include "G4UItcsh.hh"
 #include "G4VisExecutive.hh"
-#include "globals.hh"
 
 #include "RunManager.hh"
 
