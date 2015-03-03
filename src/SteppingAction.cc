@@ -33,6 +33,7 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     G4ThreeVector p = step->GetPostStepPoint()->GetMomentum();
     G4double e_mev = step->GetPostStepPoint()->GetKineticEnergy()/MeV;
 
+    printf("parent = %d\n", step->GetTrack()->GetParentID()); // XXX
 //    fEventAction->Register(id, p.cosTheta(), p.mag());
     fEventAction->Register(id, p.cosTheta(), e_mev, p.mag()/MeV);
   }

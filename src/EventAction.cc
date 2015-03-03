@@ -15,6 +15,7 @@
 #include "G4UserSteppingAction.hh"
 #include "G4UImessenger.hh"
 #include "G4Run.hh"
+#include "G4ParticleTable.hh"
 
 using namespace CLHEP;
 
@@ -56,6 +57,7 @@ void EventAction::BeginOfEventAction(const G4Event*)
 void EventAction::EndOfEventAction(const G4Event*)
 {
   if (fCount) fTree->Fill();
+  if (fCount) printf("\n"); // XXX
 }
 
 void EventAction::Register(G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV)
@@ -66,5 +68,8 @@ void EventAction::Register(G4int partId, G4double cosTheta, G4double energyMeV, 
   fMomMeV[fCount] = momMeV;
   ++fCount;
 
-  printf("pID = %d\t\tcos = %f\t\te = %f\t\tp = %f\n", partId, cosTheta, energyMeV, momMeV);
+  G4ParticleDefinition* pdef = G4ParticleTable::GetParticleTable()->FindParticle(partId);
+
+  printf("pID = %s\t\tcos = %f\t\te = %f\t\tp = %f\n",
+         pdef->GetParticleName().c_str(), cosTheta, energyMeV, momMeV);
 }

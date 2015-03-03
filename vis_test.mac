@@ -11,7 +11,7 @@
 
 /run/initialize
 
-/gps/particle neutron
+/gps/particle e-
 /gps/energy 5 MeV
 /gps/direction 0 0 1
 /gps/position 0 0 -5 m
