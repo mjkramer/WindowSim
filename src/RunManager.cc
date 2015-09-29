@@ -11,9 +11,6 @@ RunManager::RunManager()
   fDirectory = new G4UIdirectory("/sim/");
   fDirectory->SetGuidance("Parameters for the simulation");
 
-  fThicknessCmd = new G4UIcmdWithADoubleAndUnit("/sim/setThickness", this);
-  fThicknessCmd->SetGuidance("Set thickness of window");
-
   fPhysListCmd = new G4UIcmdWithAString("/sim/setReferencePhysList", this);
   fPhysListCmd->SetGuidance("Set reference physics list to be used");
 
@@ -38,14 +35,9 @@ void RunManager::InitActions()
 
 void RunManager::SetNewValue(G4UIcommand *cmd, G4String args)
 {
-  if (cmd == fThicknessCmd) {
-    G4double thickness = fThicknessCmd->GetNewDoubleValue(args);
-    SetUserInitialization(new DetectorConstruction(thickness));
-  }
-
-  else if (cmd == fPhysListCmd) {
+  if (cmd == fPhysListCmd) {
     SetUserInitialization((new G4PhysListFactory)->GetReferencePhysList(args));
-    InitActions();
+    InitActions();              // phys list must be set before primary gen
   }
 
   else if (cmd == fSeedWithTimeCmd) {

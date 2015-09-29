@@ -6,7 +6,7 @@ using namespace CLHEP;
 
 
 EventAction::EventAction() :
-  fFile(NULL), fTree(NULL), fpPartName(&fPartName)
+  fFile(NULL), fTree(NULL)
 {
   fFileNameCmd = new G4UIcmdWithAString("/sim/setFileName", this);
   fFileNameCmd->SetGuidance("Set file name");
@@ -27,7 +27,6 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 
     fTree = new TTree("particles", "Secondary particles");
     fTree->Branch("count", &fCount, "count/I");
-    fTree->Branch("partName", "std::vector<std::string>", &fpPartName);
     fTree->Branch("partId", fPartId, "partId[count]/I");
     fTree->Branch("cosTheta", fCosTheta, "cosTheta[count]/F");
     fTree->Branch("energyMeV", fEnergyMeV, "energyMeV[count]/F");
@@ -37,23 +36,31 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 
 void EventAction::BeginOfEventAction(const G4Event*)
 {
-  fCount = 0;
-  fPartName.clear();
+  fSeenParticles.clear();
 }
     
 void EventAction::EndOfEventAction(const G4Event*)
 {
+  fCount = 0;
+
+  for (auto&& pair : fSeenParticles) {
+    ParticleData& p = pair.second;
+    fPartId[fCount] = p.partId;
+    fCosTheta[fCount] = p.cosTheta;
+    fEnergyMeV[fCount] = p.energyMeV;
+    fMomMeV[fCount] = p.momMeV;
+    ++fCount;
+  }
+
   if (fCount) fTree->Fill();
 }
 
-void EventAction::Register(G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV)
+void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV)
 {
-  fPartId[fCount] = partId;
-  fCosTheta[fCount] = cosTheta;
-  fEnergyMeV[fCount] = energyMeV;
-  fMomMeV[fCount] = momMeV;
-  ++fCount;
-
-  G4ParticleDefinition* pdef = G4ParticleTable::GetParticleTable()->FindParticle(partId);
-  fPartName.push_back(pdef->GetParticleName());
+  fSeenParticles[trackID] = {partId, cosTheta, energyMeV, momMeV};
+  // fPartId[fCount] = partId;
+  // fCosTheta[fCount] = cosTheta;
+  // fEnergyMeV[fCount] = energyMeV;
+  // fMomMeV[fCount] = momMeV;
+  // ++fCount;
 }

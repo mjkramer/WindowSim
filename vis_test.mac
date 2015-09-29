@@ -3,24 +3,23 @@
 #/tracking/verbose 1
 
 /sim/setReferencePhysList QGSP_BERT_HP
-/sim/setThickness 1 mm
 /sim/seedWithTime
 #/sim/seed 12345
-/sim/setFileName out.root
+/sim/setFileName out_vis.root
 
 /run/initialize
 
-/gps/particle e-
-/gps/energy 5 MeV
-/gps/direction 0 0 1
-/gps/position 0 0 -1 m
+/gun/particle e-
+/gun/energy 200 MeV
+/gun/direction -1 0 0
+/gun/position 1 0 0 m
 
 /vis/open OGL 600x600-0+0
 /vis/viewer/set/autoRefresh false
 /vis/drawVolume
 
-/vis/viewer/set/viewpointVector -1 0 0
-/vis/viewer/set/lightsVector -1 -1 -1
+# /vis/viewer/set/viewpointVector -1 0 0
+# /vis/viewer/set/lightsVector -1 -1 -1
 #/vis/viewer/set/style wireframe
 #/vis/viewer/set/auxiliaryEdge true
 /vis/viewer/set/lineSegmentsPerCircle 100

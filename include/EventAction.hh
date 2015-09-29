@@ -1,8 +1,7 @@
 #ifndef EventAction_h
 #define EventAction_h 1
 
-#include <vector>
-#include <string>
+#include <map>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -23,18 +22,25 @@ public:
   void EndOfEventAction(const G4Event *event);
   void SetNewValue(G4UIcommand *cmd, G4String args);
 
-  void Register(G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV);
+  void Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV);
 
 private:
   G4UIcmdWithAString* fFileNameCmd;
   TFile* fFile;
   TTree* fTree;
 
+  struct ParticleData {
+    int partId;
+    float cosTheta, energyMeV, momMeV;
+  };
+
+  // key: track ID
+  std::map<G4int, ParticleData> fSeenParticles;
+
   // branches
   int fCount;
   int fPartId[128];
   float fCosTheta[128], fEnergyMeV[128], fMomMeV[128];
-  std::vector<std::string> fPartName, *fpPartName;
 };
 
 #endif

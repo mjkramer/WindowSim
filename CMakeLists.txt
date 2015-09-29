@@ -41,6 +41,9 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 add_executable(winsim main.cc ${sources} ${headers})
 target_link_libraries(winsim ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 
+add_definitions(-std=c++11)
+set_source_files_properties(src/EventAction.cc PROPERTIES COMPILE_FLAGS -Wno-narrowing)
+
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
 # build NS. This is so that we can run the executable directly because it

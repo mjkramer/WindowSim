@@ -1,41 +1,24 @@
-#include "G4NistManager.hh"
-#include "G4Box.hh"
+#include "G4GDMLParser.hh"
 #include "G4Tubs.hh"
-#include "G4LogicalVolume.hh"
-#include "G4PVPlacement.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4Colour.hh"
-#include "G4VisAttributes.hh"
 
 #include "DetectorConstruction.hh"
 
 using namespace CLHEP;
 
-DetectorConstruction::DetectorConstruction(G4double thickness)
-  : fThickness(thickness) {}
+DetectorConstruction::DetectorConstruction(const char *_gdmlFile)
+  : gdmlFile(_gdmlFile) { }
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
-  G4NistManager* man = G4NistManager::Instance();
-  G4Material* vacuum = man->FindOrBuildMaterial("G4_Galactic");
-  G4Material* aluminum = man->FindOrBuildMaterial("G4_Al");
+  G4GDMLParser p;
+  p.Read(gdmlFile);
+  // G4VPhysicalVolume *physWorld =
+  //   const_cast<G4VPhysicalVolume*>(p.GetWorldVolume());
 
-  G4VisAttributes* glassVisAtt 
-    = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5, 0.3));
+  G4VPhysicalVolume *physWorld = p.GetWorldVolume();
 
-  G4Box* worldBox = new G4Box("worldBox", 10.0*m, 10.0*m, 10.0*m);
-  G4LogicalVolume* worldL = new G4LogicalVolume(worldBox, vacuum, "worldL");
-  worldL->SetVisAttributes(G4VisAttributes::Invisible);
-  G4VPhysicalVolume* worldP =
-    new G4PVPlacement(0, G4ThreeVector(), worldL, "world", 0, false, 0, true);                 
+  // G4Tubs *tube = new G4Tubs()
 
-  G4Box* windowBox = new G4Box("windowBox", 5*cm, 5*cm, fThickness*mm);
-  G4LogicalVolume* windowL = new G4LogicalVolume(windowBox, aluminum, "windowL");
-  windowL->SetVisAttributes(glassVisAtt);
-  G4VPhysicalVolume* windowP =
-      new G4PVPlacement(G4Transform3D::Identity, windowL, "window", worldL, false, 0, true);
-
-  (void) windowP;       // suppress warning
-  return worldP;
+  return physWorld;
 }
 

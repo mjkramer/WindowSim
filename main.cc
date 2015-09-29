@@ -6,23 +6,29 @@
 #include "G4VisExecutive.hh"
 
 #include "RunManager.hh"
+#include "DetectorConstruction.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "EventAction.hh"
+#include "SteppingAction.hh"
 
 int main(int argc, char** argv)
 {
-  char* macroFile;
+  const char *macroFile, *gdmlFile;
   bool vis = false;
 
-  if (argc >= 3 && !strcmp(argv[1], "-v")) {
+  int argstart = 1;
+  if (argc >= 4 && !strcmp(argv[1], "-v")) {
     vis = true;
-    macroFile = argv[2];
-  } else if (argc >= 2) {
-    macroFile = argv[1];
-  } else {
-      std::cout << "No macro file provided!" << std::endl;
-      return 1;
+    argstart = 2;
+  } else if (argc < 3) {
+    std::cout << "Usage: " << argv[0] << " macro_file gdml_file" << std::endl;
+    return 1;
   }
+  macroFile = argv[argstart];
+  gdmlFile = argv[argstart+1];
 
   RunManager* runManager = new RunManager;
+  runManager->SetUserInitialization(new DetectorConstruction(gdmlFile));
 
 #ifdef G4VIS_USE
   if (vis) {

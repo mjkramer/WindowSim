@@ -3,16 +3,15 @@
 #/tracking/verbose 1
 
 /sim/setReferencePhysList QGSP_BERT_HP
-/sim/setThickness 1 mm
 /sim/seedWithTime
 #/sim/seed 12345
-/sim/setFileName out.root
+/sim/setFileName out_batch.root
 
 /run/initialize
 
-/gps/particle e-
-/gps/energy 5 MeV
-/gps/direction 0 0 1
-/gps/position 0 0 -1 m
+/gun/particle e-
+/gun/energy 200 MeV
+/gun/direction -1 0 0
+/gun/position 1 0 0 m
 
 /run/beamOn 10

@@ -23,7 +23,6 @@ private:
   void InitActions();
 
   G4UIdirectory* fDirectory;
-  G4UIcmdWithADoubleAndUnit* fThicknessCmd;
   G4UIcmdWithAString* fPhysListCmd;
   G4UIcmdWithoutParameter* fSeedWithTimeCmd;
   G4UIcmdWithAnInteger* fSeedCmd;

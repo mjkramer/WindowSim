@@ -8,11 +8,11 @@ class G4PhysicalVolume;
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-  DetectorConstruction(G4double thickness);
+  DetectorConstruction(const char *gdmlFile);
   virtual G4VPhysicalVolume* Construct();
 
 private:
-  G4double fThickness;
+  const char *gdmlFile;
 };
 
 #endif
