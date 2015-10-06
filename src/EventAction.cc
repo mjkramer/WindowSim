@@ -1,6 +1,9 @@
-#include "EventAction.hh"
+#include <algorithm>
 
 #include "G4ParticleTable.hh"
+#include "G4Track.hh"
+
+#include "EventAction.hh"
 
 using namespace CLHEP;
 
@@ -37,10 +40,16 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   fSeenParticles.clear();
+  fParentTracks.clear();
 }
     
 void EventAction::EndOfEventAction(const G4Event*)
 {
+  for (auto&& parentID : fParentTracks) {
+    if (fSeenParticles.find(parentID) != fSeenParticles.end())
+      fSeenParticles.erase(parentID);
+  }
+
   fCount = 0;
 
   for (auto&& pair : fSeenParticles) {
@@ -63,4 +72,11 @@ void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4dou
   // fEnergyMeV[fCount] = energyMeV;
   // fMomMeV[fCount] = momMeV;
   // ++fCount;
+}
+
+void EventAction::RememberParent(G4Track *track)
+{
+  // store parents so that when we're filling the tree, we omit any particle
+  // that produced a secondary
+  fParentTracks.push_back(track->GetParentID());
 }

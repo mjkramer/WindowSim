@@ -19,7 +19,9 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   G4VPhysicalVolume *worldVol = G4TransportationManager::GetTransportationManager()
     ->GetNavigatorForTracking()->GetWorldVolume();
 
-  if (preVol != worldVol && postVol == worldVol) {
+  bool outTheFront = step->GetPostStepPoint()->GetPosition().x() < -32*cm;
+
+  if (preVol != worldVol && postVol == worldVol && outTheFront) {
     G4int pid = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
 
     G4ThreeVector p = step->GetPostStepPoint()->GetMomentum();
@@ -29,4 +31,9 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     // FIXME: rotate axes DONE
     fEventAction->Register(trackID, pid, p_rot.cosTheta(), e_mev, p.mag()/MeV);
   }
+
+  // totally ignore steps entirely in the world volume
+  // don't worry about omitting their parents
+  if (!(preVol == worldVol && postVol == worldVol))
+    fEventAction->RememberParent(step->GetTrack());
 }
