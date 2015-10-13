@@ -34,6 +34,7 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
     fTree->Branch("cosTheta", fCosTheta, "cosTheta[count]/F");
     fTree->Branch("energyMeV", fEnergyMeV, "energyMeV[count]/F");
     fTree->Branch("momMeV", fMomMeV, "momMeV[count]/F");
+    fTree->Branch("exitXcm", fExitXcm, "exitXcm[count]/F");
   }
 }
 
@@ -58,15 +59,16 @@ void EventAction::EndOfEventAction(const G4Event*)
     fCosTheta[fCount] = p.cosTheta;
     fEnergyMeV[fCount] = p.energyMeV;
     fMomMeV[fCount] = p.momMeV;
+    fExitXcm[fCount] = p.exitXcm;
     ++fCount;
   }
 
   if (fCount) fTree->Fill();
 }
 
-void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV)
+void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV, G4double exit_x_cm)
 {
-  fSeenParticles[trackID] = {partId, cosTheta, energyMeV, momMeV};
+  fSeenParticles[trackID] = {partId, cosTheta, energyMeV, momMeV, exit_x_cm};
   // fPartId[fCount] = partId;
   // fCosTheta[fCount] = cosTheta;
   // fEnergyMeV[fCount] = energyMeV;

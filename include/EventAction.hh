@@ -10,6 +10,8 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UImessenger.hh"
 
+const int BUFSIZE = 256;
+
 class G4Track;
 
 class EventAction : public G4UserEventAction, public G4UImessenger
@@ -22,7 +24,8 @@ public:
   void EndOfEventAction(const G4Event *event);
   void SetNewValue(G4UIcommand *cmd, G4String args);
 
-  void Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV);
+  void Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV,
+                G4double exit_x_cm);
   void RememberParent(G4Track *track);
 
 private:
@@ -32,7 +35,7 @@ private:
 
   struct ParticleData {
     int partId;
-    float cosTheta, energyMeV, momMeV;
+    float cosTheta, energyMeV, momMeV, exitXcm;
   };
 
   // key: track ID
@@ -41,8 +44,9 @@ private:
 
   // branches
   int fCount;
-  int fPartId[128];
-  float fCosTheta[128], fEnergyMeV[128], fMomMeV[128];
+  int fPartId[BUFSIZE];
+  float fCosTheta[BUFSIZE], fEnergyMeV[BUFSIZE], fMomMeV[BUFSIZE];
+  float fExitXcm[BUFSIZE];
 };
 
 #endif
