@@ -4,13 +4,36 @@
 #include "G4UserSteppingAction.hh"
 #include "G4Step.hh"
 #include "G4TransportationManager.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4LogicalVolume.hh"
 
 #include "SteppingAction.hh"
 
 using namespace CLHEP;
 
+SteppingAction::SteppingAction(EventAction *eventAction) :
+  fEventAction(eventAction), fExitVol(NULL)
+{
+}
+
+static const G4LogicalVolume* getExitVol(const char* name)
+{
+  G4LogicalVolumeStore *lvs = G4LogicalVolumeStore::GetInstance();
+
+  for (auto iter = lvs->begin(); iter != lvs->end(); ++iter) {
+    const G4LogicalVolume *vol = *iter;
+    if (vol->GetName() == name) {
+      return vol;
+    }
+  }
+
+  return NULL;
+}
+
 void SteppingAction::UserSteppingAction(const G4Step *step)
 {
+  if (fExitVol == NULL) fExitVol = getExitVol("plugSkinBackOut");
+
   G4VPhysicalVolume* preVol = step->GetPreStepPoint()->GetPhysicalVolume();
   G4VPhysicalVolume* postVol = step->GetPostStepPoint()->GetPhysicalVolume();
 
@@ -19,7 +42,9 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   G4VPhysicalVolume *worldVol = G4TransportationManager::GetTransportationManager()
     ->GetNavigatorForTracking()->GetWorldVolume();
 
-  if (preVol != worldVol && postVol == worldVol) {
+  bool outTheFront = preVol->GetLogicalVolume() == fExitVol;
+
+  if (preVol != worldVol && postVol == worldVol && outTheFront) {
     G4int pid = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
     G4StepPoint *postPt = step->GetPostStepPoint();
 

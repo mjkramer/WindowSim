@@ -8,10 +8,10 @@
 class SteppingAction : public G4UserSteppingAction {
 private:
   EventAction *fEventAction;
+  const G4LogicalVolume *fExitVol;
 
 public:
-  SteppingAction(EventAction *eventAction) :
-    fEventAction(eventAction) {}
+  SteppingAction(EventAction *eventAction);
 
   void UserSteppingAction(const G4Step *step);
 };
