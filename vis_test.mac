@@ -6,6 +6,7 @@
 /sim/seedWithTime
 #/sim/seed 12345
 /sim/setFileName out_vis.root
+/sim/debug
 
 /run/initialize
 

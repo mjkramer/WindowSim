@@ -5,6 +5,7 @@
 
 #include <TFile.h>
 #include <TTree.h>
+#include <TH2F.h>
 
 #include "G4UserEventAction.hh"
 #include "G4UIcmdWithAString.hh"
@@ -32,6 +33,7 @@ private:
   G4UIcmdWithAString* fFileNameCmd;
   TFile* fFile;
   TTree* fTree;
+  TH2F* fEdepHist;
 
   struct ParticleData {
     int partId;
@@ -47,6 +49,8 @@ private:
   int fPartId[BUFSIZE];
   float fCosTheta[BUFSIZE], fEnergyMeV[BUFSIZE], fMomMeV[BUFSIZE];
   float fExitXcm[BUFSIZE];
+
+  friend class SteppingAction;
 };
 
 #endif

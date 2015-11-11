@@ -12,6 +12,9 @@ public:
   virtual void GeneratePrimaries(G4Event*);
   PrimaryGeneratorAction();
 
+  G4ParticleGun* GetGun() const { return fParticleGun; }
+
+
 private:
   G4ParticleGun* fParticleGun;
 };

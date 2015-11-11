@@ -1,4 +1,5 @@
 #include "G4PhysListFactory.hh"
+#include "G4StepLimiterPhysics.hh"
 
 #include "RunManager.hh"
 #include "DetectorConstruction.hh"
@@ -36,7 +37,10 @@ void RunManager::InitActions()
 void RunManager::SetNewValue(G4UIcommand *cmd, G4String args)
 {
   if (cmd == fPhysListCmd) {
-    SetUserInitialization((new G4PhysListFactory)->GetReferencePhysList(args));
+    G4VModularPhysicsList* physList = (new G4PhysListFactory)->GetReferencePhysList(args);
+    physList->RegisterPhysics(new G4StepLimiterPhysics);
+    SetUserInitialization(physList);
+
     InitActions();              // phys list must be set before primary gen
   }
 
