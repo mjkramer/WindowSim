@@ -81,15 +81,18 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
 
   if (trackID == 1)  {          // primary
     double edep = step->GetTotalEnergyDeposit();
+    double edepIncl = edep;
+
     const std::vector<const G4Track*>& kids = *step->GetSecondaryInCurrentStep();
     for (const G4Track* track : kids) {
-      edep += track->GetKineticEnergy() / MeV;
+      edepIncl += track->GetKineticEnergy() / MeV;
     }
 
     auto getX = [](G4StepPoint* p) { return p->GetPosition().x() / cm; };
     double x = (getX(step->GetPreStepPoint()) + getX(step->GetPostStepPoint())) / 2;
 
     fEventAction->fEdepHist->Fill(x, edep);
+    fEventAction->fEdepHistIncl->Fill(x, edepIncl);
   }
 
   if (preVol != worldVol && postVol == worldVol && outTheFront) {

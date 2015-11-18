@@ -5,7 +5,7 @@
 
 #include <TFile.h>
 #include <TTree.h>
-#include <TH2F.h>
+#include <TH1F.h>
 
 #include "G4UserEventAction.hh"
 #include "G4UIcmdWithAString.hh"
@@ -33,7 +33,7 @@ private:
   G4UIcmdWithAString* fFileNameCmd;
   TFile* fFile;
   TTree* fTree;
-  TH2F* fEdepHist;
+  TH1F* fEdepHist, *fEdepHistIncl; // Incl - includes secondary KE
 
   struct ParticleData {
     int partId;

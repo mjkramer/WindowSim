@@ -1,13 +1,8 @@
 #include <algorithm>
 #include <array>
 
-#include "G4ParticleTable.hh"
 #include "G4Track.hh"
 #include "G4RunManager.hh"
-#include "G4Proton.hh"
-#include "G4Electron.hh"
-#include "G4Gamma.hh"
-#include "G4Neutron.hh"
 
 #include "EventAction.hh"
 #include "PrimaryGeneratorAction.hh"
@@ -27,6 +22,7 @@ EventAction::~EventAction()
   if (fFile) {
     fTree->Write();
     fEdepHist->Write();
+    fEdepHistIncl->Write();
     fFile->Close();
   }
 }
@@ -44,22 +40,13 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
     fTree->Branch("momMeV", fMomMeV, "momMeV[count]/F");
     fTree->Branch("exitXcm", fExitXcm, "exitXcm[count]/F");
 
-    G4ParticleGun* gun = dynamic_cast<const PrimaryGeneratorAction*>
-      (G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction())->GetGun();
-    G4ParticleDefinition* particle = gun->GetParticleDefinition();
-
-    std::array<G4ParticleDefinition*, 4> stables =
-      {G4Proton::ProtonDefinition(), G4Gamma::GammaDefinition(),
-       G4Electron::ElectronDefinition(), G4Neutron::NeutronDefinition()};
-
-    bool is_stable = std::find(stables.begin(), stables.end(),
-                               particle) != stables.end();
-
-    double max_e = 1.1 * gun->GetParticleEnergy()/MeV + (is_stable ? 0 : particle->GetPDGMass()/MeV);
-
-    fEdepHist = new TH2F("edep", "Deposited energy vs x", 4000, -40, 0, int(max_e), 0, int(max_e));
+    fEdepHist = new TH1F("edep", "Deposited energy vs x", 4000, -40, 0);
     fEdepHist->SetXTitle("[cm]");
-    fEdepHist->SetYTitle("[MeV]");
+    fEdepHist->SetYTitle("[MeV / 0.1 mm]");
+
+    fEdepHistIncl = new TH1F("edepIncl", "Deposited energy vs x", 4000, -40, 0);
+    fEdepHistIncl->SetXTitle("[cm]");
+    fEdepHistIncl->SetYTitle("[MeV / 0.1 mm]");
   }
 }
 
