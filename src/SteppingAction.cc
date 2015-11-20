@@ -115,6 +115,19 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   //   fEventAction->RememberParent(step->GetTrack());
 }
 
+const G4LogicalVolume* getVolume(const G4String& name)
+{
+  G4LogicalVolumeStore *lvs = G4LogicalVolumeStore::GetInstance();
+
+  for (auto iter = lvs->begin(); iter != lvs->end(); ++iter) {
+    const G4LogicalVolume *vol = *iter;
+    if (vol->GetName() == name)
+      return vol;
+  }
+
+  return NULL;
+}
+
 void SteppingAction::SetNewValue(G4UIcommand* cmd, G4String args)
 {
   if (cmd == fDebugCmd)
@@ -126,15 +139,6 @@ void SteppingAction::SetNewValue(G4UIcommand* cmd, G4String args)
     root->SetUserLimits(new G4UserLimits(fStepSizeCmd->GetNewDoubleValue(args)));
   }
 
-  else if (cmd == fExitVolCmd) {
-    G4LogicalVolumeStore *lvs = G4LogicalVolumeStore::GetInstance();
-
-    for (auto iter = lvs->begin(); iter != lvs->end(); ++iter) {
-      const G4LogicalVolume *vol = *iter;
-      if (vol->GetName() == args) {
-        fExitVol = vol;
-        break;
-      }
-    }
-  }
+  else if (cmd == fExitVolCmd)
+    fExitVol = getVolume(args);
 }
