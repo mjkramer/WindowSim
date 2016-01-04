@@ -11,7 +11,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UImessenger.hh"
 
-const int BUFSIZE = 256;
+const int BUFSIZE = 1024;
 
 class G4Track;
 
@@ -35,6 +35,9 @@ private:
   TTree* fTree;
   TH1F* fEdepHist, *fEdepHistIncl; // Incl - includes secondary KE
 
+  TH1F* fDeltaEHist;
+  double fEbeforeSS, fEafterSS;
+
   struct ParticleData {
     int partId;
     float cosTheta, energyMeV, momMeV, exitXcm;
@@ -49,6 +52,7 @@ private:
   int fPartId[BUFSIZE];
   float fCosTheta[BUFSIZE], fEnergyMeV[BUFSIZE], fMomMeV[BUFSIZE];
   float fExitXcm[BUFSIZE];
+  int fTrackId[BUFSIZE];
 
   friend class SteppingAction;
 };

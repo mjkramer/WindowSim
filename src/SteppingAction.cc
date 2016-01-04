@@ -79,20 +79,24 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
 
   if (fDebug) debug(step);
 
-  if (trackID == 1)  {          // primary
-    double edep = step->GetTotalEnergyDeposit();
-    double edepIncl = edep;
+  double edep = step->GetTotalEnergyDeposit();
 
-    const std::vector<const G4Track*>& kids = *step->GetSecondaryInCurrentStep();
-    for (const G4Track* track : kids) {
-      edepIncl += track->GetKineticEnergy() / MeV;
-    }
+  auto getX = [](G4StepPoint* p) { return p->GetPosition().x() / cm; };
+  double x = (getX(step->GetPreStepPoint()) + getX(step->GetPostStepPoint())) / 2;
 
-    auto getX = [](G4StepPoint* p) { return p->GetPosition().x() / cm; };
-    double x = (getX(step->GetPreStepPoint()) + getX(step->GetPostStepPoint())) / 2;
-
+  if (trackID == 1)
     fEventAction->fEdepHist->Fill(x, edep);
-    fEventAction->fEdepHistIncl->Fill(x, edepIncl);
+  fEventAction->fEdepHistIncl->Fill(x, edep);
+
+  if (trackID == 1)  {          // primary
+    const double startSS = -42.6 + 0.6;
+    const double endSS   = -42.6 - 0.6;
+
+    if (step->GetPostStepPoint()->GetPosition().x() / mm > startSS)
+      fEventAction->fEbeforeSS = step->GetPostStepPoint()->GetKineticEnergy() / MeV;
+
+    else if (step->GetPreStepPoint()->GetPosition().x() / mm < endSS && fEventAction->fEafterSS == 0)
+      fEventAction->fEafterSS = step->GetPreStepPoint()->GetKineticEnergy() / MeV;
   }
 
   if (preVol != worldVol && postVol == worldVol && outTheFront) {
