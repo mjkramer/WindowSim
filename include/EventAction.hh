@@ -35,9 +35,6 @@ private:
   TTree* fTree;
   TH1F* fEdepHist, *fEdepHistIncl; // Incl - includes secondary KE
 
-  TH1F* fDeltaEHist;
-  double fEbeforeSS, fEafterSS;
-
   struct ParticleData {
     int partId;
     float cosTheta, energyMeV, momMeV, exitXcm;

@@ -88,17 +88,6 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     fEventAction->fEdepHist->Fill(x, edep);
   fEventAction->fEdepHistIncl->Fill(x, edep);
 
-  if (trackID == 1)  {          // primary
-    const double startSS = -42.6 + 0.6;
-    const double endSS   = -42.6 - 0.6;
-
-    if (step->GetPostStepPoint()->GetPosition().x() / mm > startSS)
-      fEventAction->fEbeforeSS = step->GetPostStepPoint()->GetKineticEnergy() / MeV;
-
-    else if (step->GetPreStepPoint()->GetPosition().x() / mm < endSS && fEventAction->fEafterSS == 0)
-      fEventAction->fEafterSS = step->GetPreStepPoint()->GetKineticEnergy() / MeV;
-  }
-
   if (preVol != worldVol && postVol == worldVol && outTheFront) {
     G4int pid = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
     G4StepPoint *postPt = step->GetPostStepPoint();
@@ -112,11 +101,6 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     fEventAction->Register(trackID, pid, p_rot.cosTheta(), e_mev, p.mag()/MeV,
                            exit_x_cm);
   }
-
-  // totally ignore steps entirely in the world volume
-  // don't worry about omitting their parents
-  // if (!(preVol == worldVol && postVol == worldVol))
-  //   fEventAction->RememberParent(step->GetTrack());
 }
 
 const G4LogicalVolume* getVolume(const G4String& name)
