@@ -54,15 +54,10 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
 void EventAction::BeginOfEventAction(const G4Event*)
 {
   fSeenParticles.clear();
-  fParentTracks.clear();
 }
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
-  // for (auto&& parentID : fParentTracks) {
-  //   if (fSeenParticles.find(parentID) != fSeenParticles.end())
-  //     fSeenParticles.erase(parentID);
-  // }
 
   fCount = 0;
 
@@ -87,11 +82,4 @@ void EventAction::EndOfEventAction(const G4Event*)
 void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV, G4double exit_x_cm)
 {
   fSeenParticles[trackID] = {partId, cosTheta, energyMeV, momMeV, exit_x_cm};
-}
-
-void EventAction::RememberParent(G4Track *track)
-{
-  // store parents so that when we're filling the tree, we omit any particle
-  // that produced a secondary
-  fParentTracks.push_back(track->GetParentID());
 }

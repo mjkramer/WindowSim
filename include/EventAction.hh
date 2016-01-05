@@ -27,7 +27,6 @@ public:
 
   void Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV,
                 G4double exit_x_cm);
-  void RememberParent(G4Track *track);
 
 private:
   G4UIcmdWithAString* fFileNameCmd;
@@ -42,7 +41,6 @@ private:
 
   // key: track ID
   std::map<G4int, ParticleData> fSeenParticles;
-  std::vector<G4int> fParentTracks;
 
   // branches
   int fCount;
