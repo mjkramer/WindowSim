@@ -3,6 +3,7 @@
 #include <numeric>
 
 #include "G4VPhysicalVolume.hh"
+#include "G4VProcess.hh"
 #include "G4UserSteppingAction.hh"
 #include "G4Step.hh"
 #include "G4TransportationManager.hh"
@@ -50,6 +51,18 @@ void debug(const G4Step* step)
                  step->GetTrack()->GetTrackID(), pname.data(), trackMom, preX, postX,
                  preMom, postMom, preKin, postKin) << G4endl;
 
+  G4String preProcName, postProcName;
+
+  const G4VProcess* preProc = step->GetPreStepPoint()->GetProcessDefinedStep();
+  if (preProc) preProcName = preProc->GetProcessName();
+
+  const G4VProcess* postProc = step->GetPostStepPoint()->GetProcessDefinedStep();
+  if (postProc) postProcName = postProc->GetProcessName();
+
+  // const G4String& preProc = step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  // const G4String& postProc = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  G4cout << Form("preProc: %s, postProc: %s", preProcName.data(), postProcName.data()) << G4endl;
+
   double depEn = step->GetTotalEnergyDeposit();
   G4cout << Form("Deposited %.4f MeV", depEn) << G4endl;
 
@@ -60,6 +73,9 @@ void debug(const G4Step* step)
     double mom = track->GetMomentum().mag() / MeV;
     double kin = track->GetKineticEnergy() / MeV;
     G4cout << Form("--> Track %d, %s, %.4f MeV/c, %.4f MeV", id, kidpname.data(), mom, kin) << G4endl;
+
+    const G4String& creator = track->GetCreatorProcess()->GetProcessName();
+    G4cout << Form("* creator: %s", creator.data()) << G4endl;
   }
 
   G4cout << "============================================================" << G4endl;
