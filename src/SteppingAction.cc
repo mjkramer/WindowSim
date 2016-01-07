@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <vector>
 #include <numeric>
+#include <algorithm>
 
 #include "G4VPhysicalVolume.hh"
 #include "G4VProcess.hh"
@@ -19,6 +20,7 @@
 #include <TROOT.h>              // Form()
 
 #include "SteppingAction.hh"
+#include "TrackInformation.hh"
 
 using namespace CLHEP;
 
@@ -33,6 +35,16 @@ SteppingAction::SteppingAction(EventAction *eventAction) :
 
   fExitVolCmd = new G4UIcmdWithAString("/sim/exitVol", this);
   fExitVolCmd->SetGuidance("Set exit volume");
+}
+
+bool isInteraction(const G4Step* step)
+{
+  auto endsWith = [](const G4String& haystack, const G4String& needle) {
+    return (haystack.size() >= needle.size())
+      && std::equal(needle.rbegin(), needle.rend(), haystack.rbegin());
+  };
+  const G4String& name = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
+  return endsWith(name, "lastic") || endsWith(name, "Nuclear");
 }
 
 void debug(const G4Step* step)
@@ -66,6 +78,9 @@ void debug(const G4Step* step)
   double depEn = step->GetTotalEnergyDeposit();
   G4cout << Form("Deposited %.4f MeV", depEn) << G4endl;
 
+  if (isInteraction(step))
+    G4cout << "INTERACTION, BABY!!!" << G4endl;
+
   const std::vector<const G4Track*>& kids = *step->GetSecondaryInCurrentStep();
   for (const G4Track* track : kids) {
     int id = track->GetTrackID();
@@ -93,7 +108,17 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
 
   bool outTheFront = preVol->GetLogicalVolume() == fExitVol;
 
-  if (fDebug) debug(step);
+  if (fDebug) {
+    auto& kids = *step->GetSecondaryInCurrentStep();
+    bool hadElastic = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "hadElastic";
+    if (hadElastic) debug(step);
+    else for (auto track : kids) {
+      if (track->GetKineticEnergy() / MeV > 10) {
+        debug(step);
+        break;
+      }
+    }
+  }
 
   double edep = step->GetTotalEnergyDeposit();
 
@@ -103,6 +128,26 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   if (trackID == 1)
     fEventAction->fEdepHist->Fill(x, edep);
   fEventAction->fEdepHistIncl->Fill(x, edep);
+
+
+  // if (! step->GetTrack()->GetUserInformation()) {
+  //   auto info = new TrackInformation;
+  //   info->prodXcm = getX(step->GetPreStepPoint());
+  //   step->GetTrack()->SetUserInformation(info);
+  // }
+
+  // auto postStep = step->GetPostStepPoint();
+
+  // if (isInteraction(postStep)) {
+  //   auto info = step->GetTrack()->GetUserInformation();
+  //   info->iActXcm = getX(postStep);
+  // }
+
+  // auto& kids = *step->GetSecondaryInCurrentStep();
+  // for (const G4Track* _track : kids) {
+  //   G4Track* track = const_cast<G4Track*>(_track);
+
+  // }
 
   if (preVol != worldVol && postVol == worldVol && outTheFront) {
     G4int pid = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();
