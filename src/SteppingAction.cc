@@ -37,7 +37,7 @@ SteppingAction::SteppingAction(EventAction *eventAction) :
   fExitVolCmd->SetGuidance("Set exit volume");
 }
 
-bool isInteraction(const G4Step* step)
+static bool isInteraction(const G4Step* step)
 {
   auto endsWith = [](const G4String& haystack, const G4String& needle) {
     return (haystack.size() >= needle.size())
@@ -47,7 +47,7 @@ bool isInteraction(const G4Step* step)
   return endsWith(name, "lastic") || endsWith(name, "Nuclear");
 }
 
-void debug(const G4Step* step)
+static void debug(const G4Step* step)
 {
   // track#, pdgID, momentumAmp
   const G4String& pname = step->GetTrack()->GetParticleDefinition()->GetParticleName();
@@ -58,7 +58,6 @@ void debug(const G4Step* step)
   double postKin = step->GetPostStepPoint()->GetKineticEnergy() / MeV;
   double preX = step->GetPreStepPoint()->GetPosition().x() / cm;
   double postX = step->GetPostStepPoint()->GetPosition().x() / cm;
-  // G4cout << "Track " << trackID << ", " << pname << ", " << G4endl;
   G4cout << Form("Track %d, %s, %.4f, %.4f - %.4f cm, %.4f - %.4f MeV/c, %.4f - %.4f MeV",
                  step->GetTrack()->GetTrackID(), pname.data(), trackMom, preX, postX,
                  preMom, postMom, preKin, postKin) << G4endl;
@@ -71,8 +70,6 @@ void debug(const G4Step* step)
   const G4VProcess* postProc = step->GetPostStepPoint()->GetProcessDefinedStep();
   if (postProc) postProcName = postProc->GetProcessName();
 
-  // const G4String& preProc = step->GetPreStepPoint()->GetProcessDefinedStep()->GetProcessName();
-  // const G4String& postProc = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
   G4cout << Form("preProc: %s, postProc: %s", preProcName.data(), postProcName.data()) << G4endl;
 
   double depEn = step->GetTotalEnergyDeposit();
@@ -106,8 +103,6 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   G4VPhysicalVolume *worldVol = G4TransportationManager::GetTransportationManager()
     ->GetNavigatorForTracking()->GetWorldVolume();
 
-  bool outTheFront = preVol->GetLogicalVolume() == fExitVol;
-
   if (fDebug) {
     auto& kids = *step->GetSecondaryInCurrentStep();
     bool hadElastic = step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "hadElastic";
@@ -129,25 +124,41 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     fEventAction->fEdepHist->Fill(x, edep);
   fEventAction->fEdepHistIncl->Fill(x, edep);
 
+  if (! step->GetTrack()->GetUserInformation()) {
+    auto info = new TrackInformation;
+    info->prodXcm = getX(step->GetPreStepPoint());
+    step->GetTrack()->SetUserInformation(info);
+  }
 
-  // if (! step->GetTrack()->GetUserInformation()) {
-  //   auto info = new TrackInformation;
-  //   info->prodXcm = getX(step->GetPreStepPoint());
-  //   step->GetTrack()->SetUserInformation(info);
-  // }
+  if (isInteraction(step)) {
+    auto info = dynamic_cast<TrackInformation*>(step->GetTrack()->GetUserInformation());
+    info->iActXcm = getX(step->GetPostStepPoint());
+  }
 
-  // auto postStep = step->GetPostStepPoint();
+  double sameSecoKE = 0.;
+  TrackInformation* sameSecoInfo = nullptr;
+  const bool parentStopped = step->GetPostStepPoint()->GetKineticEnergy() == 0;
 
-  // if (isInteraction(postStep)) {
-  //   auto info = step->GetTrack()->GetUserInformation();
-  //   info->iActXcm = getX(postStep);
-  // }
+  for (const G4Track* _track : *step->GetSecondaryInCurrentStep()) {
+    G4Track* track = const_cast<G4Track*>(_track);
+    auto info = new TrackInformation;
+    info->prodXcm = getX(step->GetPostStepPoint());
+    track->SetUserInformation(info);
 
-  // auto& kids = *step->GetSecondaryInCurrentStep();
-  // for (const G4Track* _track : kids) {
-  //   G4Track* track = const_cast<G4Track*>(_track);
+    const bool secoSame = step->GetTrack()->GetDefinition() == track->GetDefinition();
+    if (parentStopped && secoSame) {
+      if (track->GetKineticEnergy() > sameSecoKE) {
+        sameSecoKE = track->GetKineticEnergy();
+        sameSecoInfo = info;
+      }
+    }
+  }
 
-  // }
+  if (sameSecoInfo) {
+    sameSecoInfo->iActXcm = getX(step->GetPostStepPoint());
+  }
+
+  bool outTheFront = preVol->GetLogicalVolume() == fExitVol;
 
   if (preVol != worldVol && postVol == worldVol && outTheFront) {
     G4int pid = step->GetTrack()->GetParticleDefinition()->GetPDGEncoding();

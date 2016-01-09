@@ -4,10 +4,11 @@
 
 /sim/setReferencePhysList QGSP_BERT_HP
 /sim/seedWithTime
-#/sim/seed 12345
-/sim/setFileName out_batch.root
 
 /run/initialize
+
+/sim/setFileName out_batch.root
+/sim/exitVol plugSkinBackOut # or larDead
 
 /gun/particle e-
 /gun/energy 200 MeV

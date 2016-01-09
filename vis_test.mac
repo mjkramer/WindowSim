@@ -4,11 +4,12 @@
 
 /sim/setReferencePhysList FTFP_BERT
 /sim/seedWithTime
-#/sim/seed 12345
 /sim/setFileName out_vis.root
-/sim/debug
 
 /run/initialize
+
+/sim/exitVol plugSkinBackOut # or larDead
+/sim/debug
 
 /gun/particle pi+
 /gun/momentumAmp 200 MeV
