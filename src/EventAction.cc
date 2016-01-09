@@ -39,6 +39,8 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
     fTree->Branch("energyMeV", fEnergyMeV, "energyMeV[count]/F");
     fTree->Branch("momMeV", fMomMeV, "momMeV[count]/F");
     fTree->Branch("exitXcm", fExitXcm, "exitXcm[count]/F");
+    fTree->Branch("prodXcm", fProdXcm, "prodXcm[count]/F");
+    fTree->Branch("iActXcm", fIActXcm, "iActXcm[count]/F");
     fTree->Branch("trackId", fTrackId, "trackId[count]/I");
 
     fEdepHist = new TH1F("edep", "Deposited energy vs x", 4000, -40, 0);
@@ -70,7 +72,8 @@ void EventAction::EndOfEventAction(const G4Event*)
     fEnergyMeV[fCount] = p.energyMeV;
     fMomMeV[fCount] = p.momMeV;
     fExitXcm[fCount] = p.exitXcm;
-    // fIsPrimary[fCount] = id == 1;
+    fProdXcm[fCount] = p.prodXcm;
+    fIActXcm[fCount] = p.iActXcm;
     fTrackId[fCount] = id;
 
     ++fCount;
@@ -79,7 +82,7 @@ void EventAction::EndOfEventAction(const G4Event*)
   if (fCount) fTree->Fill();
 }
 
-void EventAction::Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV, G4double exit_x_cm)
+void EventAction::Register(G4int trackID, const ParticleData& data)
 {
-  fSeenParticles[trackID] = {partId, cosTheta, energyMeV, momMeV, exit_x_cm};
+  fSeenParticles[trackID] = data;
 }

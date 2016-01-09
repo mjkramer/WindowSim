@@ -169,9 +169,12 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     G4double e_mev = postPt->GetKineticEnergy() / MeV;
     G4double exit_x_cm = postPt->GetPosition().x() / cm;
 
-    // FIXME: rotate axes DONE
-    fEventAction->Register(trackID, pid, p_rot.cosTheta(), e_mev, p.mag()/MeV,
-                           exit_x_cm);
+    auto info = dynamic_cast<TrackInformation*>(step->GetTrack()->GetUserInformation());
+
+    EventAction::ParticleData data =
+      {pid, p_rot.cosTheta(), e_mev, p.mag()/MeV, exit_x_cm, info->prodXcm, info->iActXcm};
+
+    fEventAction->Register(trackID, data);
   }
 }
 

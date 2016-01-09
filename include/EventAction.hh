@@ -25,19 +25,19 @@ public:
   void EndOfEventAction(const G4Event *event);
   void SetNewValue(G4UIcommand *cmd, G4String args);
 
-  void Register(G4int trackID, G4int partId, G4double cosTheta, G4double energyMeV, G4double momMeV,
-                G4double exit_x_cm);
+protected:
+  struct ParticleData {
+    G4int partId;
+    G4double cosTheta, energyMeV, momMeV, exitXcm, prodXcm, iActXcm;
+  };
+
+  void Register(G4int trackID, const ParticleData& data);
 
 private:
   G4UIcmdWithAString* fFileNameCmd;
   TFile* fFile;
   TTree* fTree;
   TH1F* fEdepHist, *fEdepHistIncl; // Incl - includes secondary KE
-
-  struct ParticleData {
-    int partId;
-    float cosTheta, energyMeV, momMeV, exitXcm;
-  };
 
   // key: track ID
   std::map<G4int, ParticleData> fSeenParticles;
@@ -47,6 +47,8 @@ private:
   int fPartId[BUFSIZE];
   float fCosTheta[BUFSIZE], fEnergyMeV[BUFSIZE], fMomMeV[BUFSIZE];
   float fExitXcm[BUFSIZE];
+  float fProdXcm[BUFSIZE];
+  float fIActXcm[BUFSIZE];
   int fTrackId[BUFSIZE];
 
   friend class SteppingAction;
