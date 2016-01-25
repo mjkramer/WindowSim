@@ -43,13 +43,13 @@ void EventAction::SetNewValue(G4UIcommand *cmd, G4String args)
     fTree->Branch("iActXcm", fIActXcm, "iActXcm[count]/F");
     fTree->Branch("trackId", fTrackId, "trackId[count]/I");
 
-    fEdepHist = new TH1F("edep", "Deposited energy vs x", 4000, -40, 0);
+    fEdepHist = new TH1F("edep", "Deposited energy vs x", 2500, -250, 0);
     fEdepHist->SetXTitle("[cm]");
-    fEdepHist->SetYTitle("[MeV / 0.1 mm]");
+    fEdepHist->SetYTitle("[MeV / 1 mm]");
 
-    fEdepHistIncl = new TH1F("edepIncl", "Deposited energy vs x", 4000, -40, 0);
+    fEdepHistIncl = new TH1F("edepIncl", "Deposited energy vs x", 2500, -250, 0);
     fEdepHistIncl->SetXTitle("[cm]");
-    fEdepHistIncl->SetYTitle("[MeV / 0.1 mm]");
+    fEdepHistIncl->SetYTitle("[MeV / 1 mm]");
   }
 }
 
